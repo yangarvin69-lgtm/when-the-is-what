@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Name Tag Generator</title>
+</head>
+
+<body>
+
+<h2>Name Tag Generator</h2>
+
+<label>Name:</label>
+<input id="name" type="text">
+
+<br><br>
+
+<label>Tag:</label>
+<input id="tag" type="text">
+
+<br><br>
+
+<label>Tag Type:</label>
+<select id="tagType">
+    <option value="()">()</option>
+    <option value="[]">[]</option>
+    <option value="{}">{}</option>
+</select>
+
+<br><br>
+
+<button onclick="copyResult()">Copy</button>
+
+<h3>Output:</h3>
+
+<input id="result" type="text" readonly size="40">
+
+<p id="counter">0 / 20 characters</p>
+
+<script>
+
+const MAX_LENGTH = 20;
+
+const RLO = "\u202E";
+const LRO = "\u202D";
+
+function generate() {
+
+    const name = document.getElementById("name").value;
+    const tag = document.getElementById("tag").value;
+
+    const brackets = document.getElementById("tagType").value;
+
+    const open = brackets[0];
+    const close = brackets[1];
+
+    let reversedTag = tag.split('').reverse().join('');
+
+    let result =
+        name +
+        RLO +
+        open +
+        reversedTag +
+        close +
+        " " +
+        LRO;
+
+    if (result.length > MAX_LENGTH) {
+        result = result.slice(0, MAX_LENGTH);
+    }
+
+    document.getElementById("result").value = result;
+
+    document.getElementById("counter").textContent =
+        result.length + " / " + MAX_LENGTH;
+}
+
+async function copyResult() {
+
+    const result = document.getElementById("result").value;
+
+    if (!result) return;
+
+    try {
+
+        await navigator.clipboard.writeText(result);
+
+        alert("Copied!");
+
+    } catch (error) {
+
+        const input = document.getElementById("result");
+
+        input.select();
+        input.setSelectionRange(0, input.value.length);
+
+        document.execCommand("copy");
+
+        alert("Copied!");
+    }
+}
+
+document.getElementById("name").addEventListener("input", generate);
+document.getElementById("tag").addEventListener("input", generate);
+document.getElementById("tagType").addEventListener("change", generate);
+
+generate();
+
+</script>
+
+</body>
+</html>
